@@ -1,0 +1,188 @@
+/* General Styles */
+body {
+    background-color: #000; /* Black background */
+    color: white; /* White text for contrast */
+    font-family: 'Arial', sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: white; /* Default white links */
+}
+
+a:hover {
+    color: #ff6347; /* Change color to tomato on hover */
+}
+
+/* Navbar Styles */
+.navbar-dark .navbar-brand img {
+    border-radius: 50%; /* Make the logo circular */
+}
+
+/* จัดเมนูไปด้านขวา */
+.navbar-nav {
+    margin-left: auto; /* ดันเมนูไปด้านขวา */
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand {
+    margin-left: 20px;
+}
+
+.navbar-nav .nav-link {
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+/* Card Title */
+.title {
+    text-align: center; /* จัดให้อยู่กึ่งกลาง */
+    margin: 2rem 0; /* เพิ่มระยะห่างบนและล่าง */
+}
+
+.title h2 {
+    font-size: 2rem; /* กำหนดขนาดของ h2 */
+    font-weight: bold; /* ข้อความหนา */
+    color: #fff; /* กำหนดสีข้อความ */
+}
+
+/* upload */
+.drop {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(#ff7112, #ffc559);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#drop-area {
+    width: 500px;
+    height: 300px;
+    padding: 30px;
+    background: #fff;
+    text-align: center;
+    border-radius: 20px;
+}
+
+#img-view {
+    width: 100%;
+    height: 100%;
+    border-radius: 20px;
+    border: 2px dashed #bbb5ff;
+    background: #f7f8ff;
+    background-position: center;
+    background-size: cover;
+}
+
+#img-view img {
+    width: 150px;
+    height: 100px;
+    margin-top: 25px;
+}
+
+#img-view span {
+    display: block;
+    font-size: 12px;
+    color: #000;
+}
+
+#img-view p {
+    margin-top: 15px;
+    color: #000;
+}
+
+/* จัด contanier */
+.containerD {
+    background: #2c2c2c;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 600px;
+    max-width: 90%;
+    margin: 0  auto;
+    box-shadow: rgb(255, 81, 0) 0px 5px 15px;
+}
+
+.form-label {
+    margin-right: 20px; /* เพิ่มช่องว่างระหว่าง label และ input */
+}
+
+.form-control {
+    width: 100%;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #111;
+    color: #fff;
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+.footer__container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer__info h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.footer__info p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.footer__links h4 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.footer__links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer__links ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer__links ul li a {
+    color: #bbb;
+    text-decoration: none;
+}
+
+.footer__links ul li a:hover {
+    color: #fff;
+}
+
+.footer__social {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.footer__social a {
+    color: #fff;
+    margin: 0 10px;
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.footer__social a:hover {
+    color: #ff6347;
+}
+
+.footer__copyright {
+    text-align: center;
+    padding-top: 1rem;
+    font-size: 0.9rem;
+    border-top: 1px solid #444;
+    color: #bbb;
+}

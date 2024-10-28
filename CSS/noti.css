@@ -1,0 +1,189 @@
+/* General Styles */
+body {
+    background-color: #000; /* Black background */
+    color: white; /* White text for contrast */
+    font-family: 'Arial', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure full height */
+}
+
+a {
+    text-decoration: none;
+    color: white; /* Default white links */
+}
+
+a:hover {
+    color: #ff6347; /* Change color to tomato on hover */
+}
+
+/* Navbar Styles */
+.navbar-dark .navbar-brand img {
+    border-radius: 50%; /* Make the logo circular */
+}
+
+/* จัดเมนูไปด้านขวา */
+.navbar-nav {
+    margin-left: auto; /* ดันเมนูไปด้านขวา */
+    display: flex;
+    align-items: center;
+}
+
+.navbar-brand {
+    margin-left: 20px;
+}
+
+.navbar-nav .nav-link {
+    padding: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+/* Card Title */
+.title {
+    text-align: center; /* จัดให้อยู่กึ่งกลาง */
+    margin: 2rem 0; /* เพิ่มระยะห่างบนและล่าง */
+}
+
+.title h2 {
+    font-size: 2rem; /* กำหนดขนาดของ h2 */
+    font-weight: bold; /* ข้อความหนา */
+    color: #fff; /* กำหนดสีข้อความ */
+}
+
+/* ContanierNoti */
+.containerNoti {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.containerNoti .alert {
+    font-size: 18px;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* ปรับแต่งตารางให้สวยงาม */
+.table {
+    width: 1500px;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 0 ; /* เพิ่มระยะห่างระหว่างแถว */
+    text-align: left;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    border: 1px solid #ff5e00;
+    background-color: #363636; /* พื้นหลังของช่องในตาราง */
+    color: white; /* สีข้อความในตาราง */
+}
+
+.table th {
+    background-color: #202020; /* สีของส่วนหัวตาราง */
+    color: rgb(255, 116, 35);
+    font-weight: bold;
+}
+
+.table-striped tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.table-striped tbody tr:hover {
+    background-color: #333; /* เปลี่ยนสีเมื่อ hover */
+    cursor: pointer;
+}
+
+/* ทำให้ตารางแจ้งเตือนสามารถเลื่อนดูได้ */
+.containerNoti {
+    max-height: 400px; /* ปรับขนาดตามความต้องการ */
+    overflow-y: auto;  /* ทำให้สามารถเลื่อนตารางได้ */
+}
+
+/* Flexbox to ensure footer at bottom */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+main {
+    flex-grow: 1; /* Grow the main section to fill the space */
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #111;
+    color: #fff;
+    padding: 2rem 0;
+    margin-top: 3rem;
+    flex-shrink: 0; /* Ensure footer does not shrink */
+}
+
+.footer__container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer__info h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.footer__info p {
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.footer__links h4 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.footer__links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer__links ul li {
+    margin-bottom: 0.5rem;
+}
+
+.footer__links ul li a {
+    color: #bbb;
+    text-decoration: none;
+}
+
+.footer__links ul li a:hover {
+    color: #fff;
+}
+
+.footer__social {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.footer__social a {
+    color: #fff;
+    margin: 0 10px;
+    font-size: 1.5rem;
+    transition: color 0.3s;
+}
+
+.footer__social a:hover {
+    color: #ff6347;
+}
+
+.footer__copyright {
+    text-align: center;
+    padding-top: 1rem;
+    font-size: 0.9rem;
+    border-top: 1px solid #444;
+    color: #bbb;
+}
