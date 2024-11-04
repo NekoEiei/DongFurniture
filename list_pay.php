@@ -37,7 +37,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav" style="font-size: 25px;">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="carpenter.php">รายงานผล</a>
+                        <a class="nav-link active" aria-current="page" href="carpenter.php">ส่งการแจ้งเตือน</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="carpenter_rate.php">รายงานผลการประเมิน</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="carpenter_stage.php">รายงานความคืบหน้า</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="list_order.php">รายการสั่งทำ</a>

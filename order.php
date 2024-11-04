@@ -1,46 +1,49 @@
 <?php 
 
-    session_start();
-    require_once 'config/db.php';
-    if (!isset($_SESSION['user_login'])) {
-        $_SESSION['error'] = 'กรุณาเข้าสู่ระบบ!';
-        header('location: login.php');
-    }
+session_start();
+require_once 'config/db.php';
 
-    if (isset($_POST['confirm'])) {
-        $id = $_SESSION['user_login'];
-        $detail = $_POST['detail'];
-        $order_at = date('Y-m-d H:i:s');
+if (!isset($_SESSION['user_login'])) {
+    $_SESSION['error'] = 'กรุณาเข้าสู่ระบบ!';
+    header('location: login.php');
+}
 
-        // ตรวจสอบและอัปโหลดไฟล์
-        $filename = $_FILES['input-file']['name'];
-        $fileTmpName = $_FILES['input-file']['tmp_name'];
-        $fileExt = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        $allowed = array('jpg', 'jpeg', 'png', 'pdf');
+if (isset($_POST['confirm'])) {
+    $id = $_SESSION['user_login'];
+    $detail = $_POST['detail'];
+    $room = $_POST['room'];
+    $order_at = date('Y-m-d H:i:s');
 
-        if (in_array($fileExt, $allowed)) {
-            // ตั้งชื่อไฟล์ใหม่เพื่อป้องกันการชนกันของชื่อไฟล์
-            $newFilename = uniqid() . '.' . $fileExt;
-            $uploadPath = 'order_bp/' . $newFilename;
+    // ตรวจสอบและอัปโหลดไฟล์
+    $filename = $_FILES['input-file']['name'];
+    $fileTmpName = $_FILES['input-file']['tmp_name'];
+    $fileExt = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    $allowed = array('jpg', 'jpeg', 'png', 'pdf');
 
-            if (move_uploaded_file($fileTmpName, $uploadPath)) {
-                // บันทึกข้อมูลคำสั่งในฐานข้อมูล
-                $stmt = $conn->prepare("INSERT INTO order_detail (id, detail, order_at, file_path) VALUES (:id, :detail, :order_at, :file_path)");
-                $stmt->bindParam(':id', $id);
-                $stmt->bindParam(':detail', $detail);
-                $stmt->bindParam(':order_at', $order_at);
-                $stmt->bindParam(':file_path', $newFilename);
-                $stmt->execute();
+    if (in_array($fileExt, $allowed)) {
+        // ตั้งชื่อไฟล์ใหม่เพื่อป้องกันการชนกันของชื่อไฟล์
+        $newFilename = uniqid() . '.' . $fileExt;
+        $uploadPath = 'order_bp/' . $newFilename;
 
-                $_SESSION['success'] = 'สั่งทำสำเร็จ!';
-                header('location: order.php');
-            } else {
-                $_SESSION['error'] = 'อัพโหลดไฟล์ไม่สำเร็จ!';
-            }
+        if (move_uploaded_file($fileTmpName, $uploadPath)) {
+            // บันทึกข้อมูลคำสั่งในฐานข้อมูล
+            $stmt = $conn->prepare("INSERT INTO order_detail (id, detail, room, order_at, file_path) VALUES (:id, :detail, :room, :order_at, :file_path)");
+            $stmt->bindParam(':id', $id);
+            $stmt->bindParam(':detail', $detail);
+            $stmt->bindParam(':room', $room);
+            $stmt->bindParam(':order_at', $order_at);
+            $stmt->bindParam(':file_path', $newFilename);
+            $stmt->execute();
+
+            $_SESSION['success'] = 'สั่งทำสำเร็จ!';
+            header('location: order.php');
         } else {
-            $_SESSION['error'] = 'รองรับเฉพาะไฟล์ JPG, JPEG, PNG, และ PDF';
+            $_SESSION['error'] = 'อัพโหลดไฟล์ไม่สำเร็จ!';
         }
+    } else {
+        $_SESSION['error'] = 'รองรับเฉพาะไฟล์ JPG, JPEG, PNG, และ PDF';
     }
+}
 ?>
 
 <!DOCTYPE html>
@@ -49,64 +52,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="CSS/order.css">
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.2.0/fonts/remixicon.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="image/newDong logo.png">
 </head>
 <body>
-    <!---=========Menu=============-->
+    <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <!---=========Logo=============-->
             <a class="navbar-brand" href="#">
                 <img src="image/newDong logo.png" alt="" width="100px" height="100px">
             </a>
-
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav" style="font-size: 25px;">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.php">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">สั่งทำ</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="pay.php">จ่ายเงิน</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="noti.php">การแจ้งเตือน</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link active" href="index.php">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">สั่งทำ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="pay.php">จ่ายเงิน</a></li>
+                    <li class="nav-item"><a class="nav-link" href="stage.php">สถานะการสั่งทำ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="noti.php">การแจ้งเตือน</a></li>
                 </ul>
             </div>
-            <a href="logout.php" class="btn btn-outline-danger" style="margin: 20px; font-size: 18px;">Logout</a>
+            <a href="logout.php" class="btn btn-outline-danger">Logout</a>
         </div>
     </nav>
 
-    <!--==================== MAIN ====================-->
+    <!-- Main Order Form -->
     <main class="main">
-        <!--==================== Order ====================-->
-        <?php if(isset($_SESSION['error'])) { ?>
-            <div class="alert alert-danger">
-                <?php 
-                    echo $_SESSION['error'];
-                    unset($_SESSION['error']);
-                ?>
-            </div>
-        <?php } ?>
-        <?php if(isset($_SESSION['success'])) { ?>
-            <div class="alert alert-success">
-                <?php 
-                    echo $_SESSION['success'];
-                    unset($_SESSION['success']);
-                ?>
-            </div>
-        <?php } ?>
-
         <div class="title">
-            <h2>การสั่งทำ</h2>
+            <h2>การสั่งทำ (ส่งแบบเพื่อประเมินราคา)</h2>
         </div>
         <div class="containerD">
+            <?php if(isset($_SESSION['error'])) { ?>
+                <div class="alert alert-danger">
+                    <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+                </div>
+            <?php } ?>
+            <?php if(isset($_SESSION['success'])) { ?>
+                <div class="alert alert-success">
+                    <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+                </div>
+            <?php } ?>
+
             <form action="" method="post" enctype="multipart/form-data" class="upload_f">
                 <h3 style="color:#ff4118;">อัพโหลดแบบแปลน</h3>
                 <label for="input-file" id="drop-area">
@@ -117,11 +102,22 @@
                         <span>อัพโหลดไฟล์จาก Desktop</span>
                     </div>
                 </label>
+
                 <div class="mb-3">
-                    <label for="detail" style="font-size:25px; color:#ff4118; margin-top:30px;">รายละเอียดเพิ่มเติม</label>
+                    <label for="room" style="font-size:25px; color:#ff4118;">ประเภทห้อง</label>
+                    <select name="room" id="room" required>
+                        <option value="bath">ห้องน้ำ</option>
+                        <option value="bed">ห้องนอน</option>
+                        <option value="kit">ห้องครัว</option>
+                        <option value="living">ห้องนั่งเล่น</option>
+                    </select>
+
+                    <label for="detail" style="font-size:25px; color:#ff4118; margin-top:30px;">รายการสินค้า</label>
                     <textarea name="detail" id="detail" rows="4" cols="40" required></textarea>
+
                 </div>
-                <button type="submit"  name="confirm" class="btn btn-success" style="width:100px; height:50px; font-size: 20px; margin-left: 215px;">สั่งทำ</button>
+
+                <button type="submit" name="confirm" class="btn btn-success">สั่งทำ</button>
             </form>
         </div>
     </main>

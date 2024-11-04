@@ -96,11 +96,11 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>Pay ID</th>
+                        <th>รหัสการชำระเงิน</th>
                         <th>User ID</th>
-                        <th>Payment Date</th>
-                        <th>File Path</th>
-                        <th>Actions</th>
+                        <th>วันที่ทำการชำระเงิน</th>
+                        <th>File บิลจ่ายเงิน</th>
+                        <th>การจัดการ</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -109,7 +109,13 @@
                             <td><?php echo $payment['pay_id']; ?></td>
                             <td><?php echo $payment['id']; ?></td>
                             <td><?php echo $payment['pay_at']; ?></td>
-                            <td><?php echo $payment['file_path']; ?></td>
+                            <td>
+                                <?php if (!empty($payment['file_path'])) { ?>
+                                    <a href="pay_bill/<?php echo $payment['file_path']; ?>" download>Download</a>
+                                <?php } else { ?>
+                                    <span class="text-muted">No file</span>
+                                <?php } ?>
+                            </td>
                             <td>
                                 <a href="?delete=<?php echo $payment['pay_id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('คุณต้องการลบข้อมูลนี้หรือไม่?');">ลบ</a>
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editModal<?php echo $payment['pay_id']; ?>">แก้ไข</button>

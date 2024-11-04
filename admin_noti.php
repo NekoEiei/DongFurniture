@@ -27,9 +27,10 @@
         $notification_id = $_POST['notification_id'];
         $message = $_POST['message'];
 
-        $stmt = $conn->prepare("UPDATE notifications SET message = :message WHERE id = :id");
+        // แก้ไขให้ใช้ noti_id แทน id
+        $stmt = $conn->prepare("UPDATE notifications SET message = :message WHERE noti_id = :noti_id");
         $stmt->bindParam(':message', $message);
-        $stmt->bindParam(':id', $notification_id);
+        $stmt->bindParam(':noti_id', $notification_id);
         $stmt->execute();
 
         $_SESSION['success'] = 'แก้ไขการแจ้งเตือนสำเร็จ!';
@@ -41,8 +42,9 @@
     if (isset($_POST['delete_notification'])) {
         $notification_id = $_POST['notification_id'];
 
-        $stmt = $conn->prepare("DELETE FROM notifications WHERE id = :id");
-        $stmt->bindParam(':id', $notification_id);
+        // แก้ไขให้ใช้ noti_id แทน id
+        $stmt = $conn->prepare("DELETE FROM notifications WHERE noti_id = :noti_id");
+        $stmt->bindParam(':noti_id', $notification_id);
         $stmt->execute();
 
         $_SESSION['success'] = 'ลบการแจ้งเตือนสำเร็จ!';
@@ -53,8 +55,7 @@
     // ดึงข้อมูลการแจ้งเตือนทั้งหมด
     $stmt = $conn->prepare("SELECT * FROM notifications ORDER BY created_at DESC");
     $stmt->execute();
-    $notifications = $stmt->fetchAll();
-
+    $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -124,19 +125,19 @@
                 <tbody>
                     <?php foreach ($notifications as $notification) { ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($notification['message']); ?></td>
-                            <td><?php echo htmlspecialchars($notification['created_at']); ?></td>
+                            <td><?php echo $notification['message']; ?></td>
+                            <td><?php echo $notification['created_at']; ?></td>
                             <td>
                                 <!-- ปุ่มแก้ไข -->
                                 <form action="" method="post" class="d-inline">
-                                    <input type="hidden" name="notification_id" value="<?php echo $notification['id']; ?>">
+                                    <input type="hidden" name="notification_id" value="<?php echo $notification['noti_id']; ?>">
                                     <input type="text" name="message" value="<?php echo htmlspecialchars($notification['message']); ?>" required>
                                     <button type="submit" name="edit_notification" class="btn btn-warning btn-sm">แก้ไข</button>
                                 </form>
                                 
                                 <!-- ปุ่มลบ -->
                                 <form action="" method="post" class="d-inline">
-                                    <input type="hidden" name="notification_id" value="<?php echo $notification['id']; ?>">
+                                    <input type="hidden" name="notification_id" value="<?php echo $notification['noti_id']; ?>">
                                     <button type="submit" name="delete_notification" class="btn btn-danger btn-sm" onclick="return confirm('ต้องการลบการแจ้งเตือนนี้?')">ลบ</button>
                                 </form>
                             </td>

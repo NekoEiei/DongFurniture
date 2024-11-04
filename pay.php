@@ -75,6 +75,9 @@
                         <a class="nav-link" href="#">จ่ายเงิน</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="stage.php">สถานะการสั่งทำ</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="noti.php">การแจ้งเตือน</a>
                     </li>
                 </ul>

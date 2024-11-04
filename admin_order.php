@@ -27,7 +27,7 @@
         $stmt->execute();
 
         $_SESSION['success'] = 'ลบข้อมูลคำสั่งทำเรียบร้อยแล้ว!';
-        header('location: admin__order.php');
+        header('location: admin_order.php');
     }
 
     // ฟังก์ชันการเพิ่มและแก้ไขข้อมูลคำสั่งทำ
@@ -75,8 +75,12 @@
             $_SESSION['success'] = 'อัปเดตข้อมูลคำสั่งทำเรียบร้อยแล้ว!';
         } else {
             // เพิ่มข้อมูลคำสั่งทำใหม่
-            $stmt = $conn->prepare("INSERT INTO order_detail (detail, order_at, file_path) VALUES (:detail, :order_at, :file_path)");
+            $stmt = $conn->prepare("INSERT INTO order_detail (id, detail, price, period, room, order_at, file_path) VALUES (:id, :detail, :price, :period, :room, :order_at, :file_path)");
+            $stmt->bindParam(':id', $id);
             $stmt->bindParam(':detail', $detail);
+            $stmt->bindParam(':price', $price);
+            $stmt->bindParam(':period', $period);
+            $stmt->bindParam(':room', $room);
             $stmt->bindParam(':order_at', $order_at);
             $stmt->bindParam(':file_path', $newFilename);
             $stmt->execute();
@@ -84,7 +88,7 @@
             $_SESSION['success'] = 'เพิ่มข้อมูลคำสั่งทำเรียบร้อยแล้ว!';
         }
 
-        header('location: admin__order.php');
+        header('location: admin_order.php');
     }
 
     // ดึงข้อมูลการสั่งทำทั้งหมด
@@ -167,18 +171,24 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>Order ID</th>
-                        <th>Detail</th>
-                        <th>Order Date</th>
-                        <th>File</th>
-                        <th>Actions</th>
+                        <th>หมายเลขคำสั่งซื้อ</th>
+                        <th>รหัสลูกค้า</th>
+                        <th>ประเภทห้อง</th>
+                        <th>รายละเอียด</th>
+                        <th>รอบการแบ่งจ่าย</th>
+                        <th>วันที่สั่งทำ</th>
+                        <th>ไฟล์แบบแปลน</th>
+                        <th>การจัดการ</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($orders as $order) { ?>
                         <tr>
                             <td><?php echo $order['order_id']; ?></td>
+                            <td><?php echo $order['id']; ?></td>
+                            <td><?php echo $order['room']; ?></td>
                             <td><?php echo $order['detail']; ?></td>
+                            <td><?php echo $order['period']; ?></td>
                             <td><?php echo $order['order_at']; ?></td>
                             <td>
                                 <?php if ($order['file_path']) { ?>

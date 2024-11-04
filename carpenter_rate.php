@@ -7,28 +7,33 @@
         header('location: login.php');
     }
 
-    // ตรวจสอบการส่งข้อมูลการแจ้งเตือน
+    // ตรวจสอบการส่งข้อมูลการประเมิน
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $id = $_POST['id'];
-        $message = $_POST['message'];
-        $order_id = $_POST['order_id']; // เพิ่มการรับค่า order_id ด้วย
+        $order_id = $_POST['order_id'];
+        $s_message = $_POST['s_message'];
+        $price = $_POST['price'];
+        $period = $_POST['period'];
+        $id = $_SESSION['carpenter_login']; // ใช้ id จาก session
     
-        if (!empty($id) && !empty($message) && !empty($order_id)) {
-            // เพิ่มการแจ้งเตือนในฐานข้อมูล
-            $stmt = $conn->prepare("INSERT INTO notifications (id, order_id, message, created_at, is_read) VALUES (?, ?, ?, NOW(), 0)");
-            $stmt->execute([$id, $order_id, $message]);
-    
-            $_SESSION['success'] = "ส่งการแจ้งเตือนสำเร็จ!";
+        if (!empty($order_id) && !empty($s_message) && !empty($price) && !empty($id)) {
+            // อัปเดต price และ period ในตาราง order_detail
+            $stmt = $conn->prepare("UPDATE order_detail SET price = ?, period = ? WHERE order_id = ?");
+            $stmt->execute([$price, $period, $order_id]);
+        
+            // เพิ่ม s_message ลงในตาราง notifications พร้อม user_id
+            $stmt = $conn->prepare("INSERT INTO notifications (order_id, s_message, id) VALUES (?, ?, ?)");
+            $stmt->execute([$order_id, $s_message, $id]);
+        
+            $_SESSION['success'] = "ส่งผลการประเมินราคาสำเร็จ!";
         } else {
             $_SESSION['error'] = "กรุณากรอกข้อมูลให้ครบถ้วน!";
         }
     }
 
-    // ดึงรายชื่อผู้ใช้จากฐานข้อมูลเพื่อนำมาเลือกส่งการแจ้งเตือน
-    $stmt = $conn->prepare("SELECT id, username FROM users");
+    // ดึงข้อมูล order_id ของคำสั่งซื้อทั้งหมดเพื่อนำมาเลือกประเมิน
+    $stmt = $conn->prepare("SELECT order_id FROM order_detail ORDER BY order_id DESC");
     $stmt->execute();
-    $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+    $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 
@@ -55,10 +60,10 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav" style="font-size: 25px;">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">ส่งการแจ้งเตือน</a>
+                        <a class="nav-link active" aria-current="page" href="carpenter.php">ส่งการแจ้งเตือน</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="carpenter_rate.php">รายงานผลการประเมิน</a>
+                        <a class="nav-link" href="#">รายงานผลการประเมิน</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="carpenter_stage.php">รายงานความคืบหน้า</a>
@@ -79,7 +84,7 @@
     <main class="main">
         <!--==================== Carpenter ====================-->
         <div class="containerD">
-            <h2>ส่งการแจ้งเตือนให้ผู้ใช้</h2>
+            <h2>รายงานผลการประเมินราคา</h2>
 
             <!-- แสดงข้อความสำเร็จหรือล้มเหลว -->
             <?php if (isset($_SESSION['success'])): ?>
@@ -99,38 +104,33 @@
             <?php endif; ?>
 
             <!-- ฟอร์มส่งการแจ้งเตือน -->
-            <form action="carpenter.php" method="POST">
+            <form action="carpenter_rate.php" method="POST">
                 <div class="mb-3">
-                    <label for="id" class="form-label">เลือกผู้ใช้</label>
-                    <select name="id" id="id" class="form-control" required>
-                        <option value="">-- เลือกผู้ใช้ --</option>
-                        <?php foreach ($users as $user): ?>
-                            <option value="<?php echo $user['id']; ?>"><?php echo $user['username']; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <!-- เพิ่มฟิลด์ order_id -->
-                <div class="mb-3">
-                    <label for="order_id" class="form-label">เลือก Order</label>
+                    <label for="order_id" class="form-label">เลือกหมายเลขการสั่งทำ (Order ID)</label>
                     <select name="order_id" id="order_id" class="form-control" required>
-                        <option value="">-- เลือก Order --</option>
-                        <?php 
-                        $stmt_orders = $conn->prepare("SELECT order_id FROM order_detail");
-                        $stmt_orders->execute();
-                        $orders = $stmt_orders->fetchAll(PDO::FETCH_ASSOC);
-                        foreach ($orders as $order): ?>
-                            <option value="<?php echo $order['order_id']; ?>"><?php echo $order['order_id']; ?></option>
+                        <option value="">-- เลือกหมายเลขการสั่งทำ --</option>
+                        <?php foreach ($orders as $order): ?>
+                            <option value="<?php echo $order['order_id']; ?>">Order ID: <?php echo $order['order_id']; ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="mb-3">
-                    <label for="message" class="form-label">ข้อความการแจ้งเตือน</label>
-                    <textarea name="message" id="message" class="form-control" rows="4" required></textarea>
+                    <label for="s_message" class="form-label">รายละเอียดการประเมิน</label>
+                    <textarea name="s_message" id="s_message" class="form-control" rows="4" required></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary">ส่งการแจ้งเตือน</button>
+                <div class="mb-3">
+                    <label for="price" class="form-label">ราคารวม</label>
+                    <input type="text" name="price" id="price" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="period" class="form-label">รอบการแบ่งจ่าย</label>
+                    <input type="text" name="period" id="period" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary">ส่งผลการประเมิน</button>
             </form>
         </div>
     </main>

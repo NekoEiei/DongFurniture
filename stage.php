@@ -9,13 +9,28 @@
         exit;
     }
 
-    // ดึง id ของผู้ใช้จาก session
-    $user_id = $_SESSION['user_login'];
+    // กำหนดตัวแปร user_login จาก session
+    $user_login = $_SESSION['user_login'];
 
-    // ดึงข้อมูลการแจ้งเตือนจากฐานข้อมูล
-    $stmt = $conn->prepare("SELECT * FROM notifications WHERE id = ? AND is_read = 0 ORDER BY created_at DESC");
-    $stmt->execute([$user_id]); // ใช้ $user_id แทน $id ใน SQL query
-    $notifications = $stmt->fetchAll();
+    // อัปเดตสถานะการสั่งทำเมื่อกดปุ่ม อนุมัติ หรือ ปฏิเสธ
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $order_id = $_POST['order_id'];
+        $new_stage = $_POST['new_stage'];
+
+        $stmt = $conn->prepare("UPDATE order_detail SET order_stage = ? WHERE order_id = ?");
+        $stmt->execute([$new_stage, $order_id]);
+
+        $_SESSION['success'] = "อัปเดตสถานะสำเร็จ!";
+    }
+
+    // ดึงข้อมูลสถานะการสั่งทำของลูกค้าเฉพาะผู้ใช้ที่ล็อกอินอยู่
+    $stmt = $conn->prepare("SELECT order_detail.order_id, order_detail.order_stage, order_detail.price 
+    FROM order_detail
+    WHERE order_detail.id = :user_login 
+    ORDER BY order_detail.id DESC");
+    $stmt->execute(['user_login' => $user_login]);
+    $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
 <!DOCTYPE html>
@@ -50,10 +65,10 @@
                         <a class="nav-link" href="pay.php">จ่ายเงิน</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="stage.php">สถานะการสั่งทำ</a>
+                        <a class="nav-link" href="#">สถานะการสั่งทำ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">การแจ้งเตือน</a>
+                        <a class="nav-link" href="noti.php">การแจ้งเตือน</a>
                     </li>
                 </ul>
             </div>
@@ -63,35 +78,45 @@
 
     <!--==================== MAIN ====================-->
     <main class="main">
-        <!--==================== Notification ====================-->
         <div class="title">
-            <h2>การแจ้งเตือน</h2>
+            <h2>สถานะการสั่งทำของคุณ</h2>
         </div>
-        <div class="containerNoti">
-            <table class="table table-striped">
+
+        <!-- ตรวจสอบว่ามีรายการสั่งทำหรือไม่ -->
+        <?php if (count($orders) > 0): ?>
+            <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>ข้อความแจ้งเตือน</th>
-                        <th>ส่งมาเมื่อ</th>
+                        <th>หมายเลขการสั่งทำ</th>
+                        <th>สถานะการสั่งทำ</th>
+                        <th>ราคา</th>
+                        <th>การจัดการการสั่งทำ</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- โค้ด PHP แสดงการแจ้งเตือน -->
-                    <?php
-                        if (count($notifications) > 0) {
-                            foreach ($notifications as $notification) {
-                                echo '<tr>';
-                                echo '<td>' . htmlspecialchars($notification['message']) . '</td>';
-                                echo '<td>' . htmlspecialchars($notification['created_at']) . '</td>';
-                                echo '</tr>';
-                            }
-                        } else {
-                            echo '<tr><td colspan="2">ไม่มีการแจ้งเตือนใหม่</td></tr>';
-                        }
-                    ?>
+                    <?php foreach ($orders as $order): ?>
+                        <tr>
+                            <td><?php echo $order['order_id']; ?></td>
+                            <td><?php echo $order['order_stage']; ?></td>
+                            <td><?php echo is_numeric($order['price']) ? number_format($order['price'], 2) : 'ยังไม่ได้ประเมิณราคา'; ?> บาท</td>
+                            <td>
+                                <!-- ฟอร์มสำหรับอนุมัติและปฏิเสธ -->
+                                <form action="stage.php" method="POST" style="display: inline-block;">
+                                    <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                                    <button type="submit" name="new_stage" value="approved" class="btn btn-success btn-sm">อนุมัติ</button>
+                                </form>
+                                <form action="order_status.php" method="POST" style="display: inline-block;">
+                                    <input type="hidden" name="order_id" value="<?php echo $order['order_id']; ?>">
+                                    <button type="submit" name="new_stage" value="rejected" class="btn btn-danger btn-sm">ยกเลิก</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
-        </div>
+        <?php else: ?>
+            <p style="text-align: center;">คุณยังไม่มีรายการสั่งทำ</p>
+        <?php endif; ?>
     </main>
 
     <!--==================== FOOTER ====================-->
